@@ -1,0 +1,18 @@
+@url = https://localhost:44345
+
+###
+POST {{url}}/notification
+Content-Type: application/json
+
+{
+    "UserId": "Rafi"
+}
+
+
+###
+POST {{url}}/signIn
+Content-Type: application/json
+
+{
+    "MobileNumber": "971554296326",
+}
