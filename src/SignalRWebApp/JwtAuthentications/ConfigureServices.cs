@@ -9,7 +9,7 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddJwt(this IServiceCollection services, IConfiguration configuration)
     {
-        var section = configuration.GetSection("jwt");
+        var section = configuration.GetSection("jwts");
         var jwtOptions = section.BindOptions<JwtOptions>();
         services.Configure<JwtOptions>(section);
         

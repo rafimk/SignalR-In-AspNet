@@ -3,13 +3,15 @@ using MediatR;
 using SignalRWebApp.Commands;
 using SignalRWebApp.Hubs;
 using SignalRWebApp.JwtAuthentications;
+using SignalRWebApp.Time;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddJwt(builder.Configuration);
+builder.Services.AddSingleton<IClock, UtcClock>();
+builder.Services.AddAuth(builder.Configuration);
 
 builder.Services.AddSignalR();
 
