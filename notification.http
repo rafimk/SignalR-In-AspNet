@@ -1,18 +1,23 @@
-@url = https://localhost:44345
+@url = https://localhost:44345/
 
 ###
-POST {{url}}/notification
-Content-Type: application/json
-
-{
-    "UserId": "Rafi"
-}
-
-
-###
+# @name sign_in
 POST {{url}}/signIn
 Content-Type: application/json
 
 {
-    "MobileNumber": "971554296326",
+    "MobileNumber": "971554296326"
+}
+
+### 
+@accessToken = {{sign_in.response.body.$.accessToken}}
+
+###
+POST {{url}}/notification
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+    "userId": "Rafi",
+    "message": "Hi how are you"
 }

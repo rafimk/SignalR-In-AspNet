@@ -5,7 +5,7 @@ var jwtToken = localStorage.getItem("token");
 if (jwtToken) {
     console.log("Token exists", jwtToken);
     const hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl("http://localhost:5000/notifications", {
+        .withUrl("https://localhost:44345/notifications", {
             accessTokenFactory: () => jwtToken
         })
         .build();
