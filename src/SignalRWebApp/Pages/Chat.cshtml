@@ -1,34 +1,67 @@
 ﻿@page
 <div class="container">
     <div class="row p-1">
-        <div class="col-6 text-end">
+        <div class="col-12 text-end">
             <ul id="notificationList"></ul>
         </div>
     </div>
-    
     <div class="row p-1">
-        <div class="col-1">User</div>
-        <div class="col-5"><input type="text" id="userInput"/></div>
-    </div>
-    <div class="row p-1">
-        <div class="col-1">Message</div>
-        <div class="col-5"><input type="text" class="w-100" id="messageInput"/></div>
-    </div>
-    <div class="row p-1">
-        <div class="col-6 text-end">
+        <div class="col-3">Message</div>
+        <div class="col-6"><input type="text" class="w-100" id="messageInput"/></div>
+        <div class="col-3 text-end">
             <input type="button" id="sendButton" value="Send Message"/>
-        </div>
-    </div>
-    <div class="row p-1">
-        <div class="col-6">
-            <hr/>
-        </div>
-    </div>
-    <div class="row p-1">
-        <div class="col-6">
-            <ul id="messagesList"></ul>
         </div>
     </div>
 </div>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>
+
+<script>
+    // Wait for the DOM to be fully loaded before executing any JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to handle sign-in process
+        async function sendMessage() {
+            const messageInput = document.getElementById("messageInput").value.trim();
+            const baseUrl = window.location.origin;
+            const notificationUrl = `${baseUrl}/notification`;
+            const userId = "Rafi"; // Replace with actual user ID
+
+            // Retrieve the access token from local storage
+            const accessToken = localStorage.getItem("token");
+
+            if (!accessToken) {
+                console.error("Access token not found in local storage.");
+                return;
+            }
+
+            try {
+                const response = await fetch(notificationUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}` // Include access token in Authorization header
+                    },
+                    body: JSON.stringify({ userId, message: messageInput })
+                });
+
+                if (response.ok) {
+                    const payload = await response.json();
+                    console.log('Message accepted:', payload);
+
+                    // Optionally, clear the input field after sending
+                    document.getElementById("messageInput").value = "";
+                } else {
+                    // Handle specific HTTP error statuses
+                    const errorMessage = await response.text();
+                    console.error(`Sending message failed with status ${response.status}: ${errorMessage}`);
+                }
+            } catch (error) {
+                console.error('Error occurred during sending message:', error);
+            }
+        }
+
+        // Bind sign-in function to the click event of the login button
+        const loginButton = document.getElementById("sendButton");
+        loginButton.addEventListener("click", sendMessage);
+    });
+</script>

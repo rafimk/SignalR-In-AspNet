@@ -11,4 +11,57 @@
         </div>
     </div>
 </div>
-<script src="~/js/login.js"></script>
+
+<!-- Include the login.js script 
+<script src="~/js/login.js"></script> -->
+
+<script>
+    // Wait for the DOM to be fully loaded before executing any JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to handle sign-in process
+        async function signIn() {
+            const mobileNumber = document.getElementById("mobileNumber").value;
+            const baseUrl = window.location.origin; 
+
+            const signInUrl = `${baseUrl}/signIn`;
+
+            try {
+                const response = await fetch(signInUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ mobileNumber: mobileNumber })
+                });
+
+                if (response.ok) {
+                    const payload = await response.json();
+                    const accessToken = payload.accessToken;
+
+                    if (accessToken) {
+                        storeAccessToken(accessToken);
+                        console.log('Successfully signed in with token:', accessToken);
+                        window.location.href = "/chat";
+                    } else {
+                        console.error('Access token not found in response payload');
+                    }
+                } else {
+                    // Handle specific HTTP error statuses
+                    const errorMessage = await response.text();
+                    console.error(`Sign-in request failed with status ${response.status}: ${errorMessage}`);
+                }
+            } catch (error) {
+                console.error('Error occurred during sign-in request:', error);
+            }
+        }
+
+        // Function to store access token in localStorage
+        function storeAccessToken(accessToken) {
+            localStorage.setItem("token", accessToken);
+        }
+
+        // Bind sign-in function to the click event of the login button
+        const loginButton = document.getElementById("loginButton");
+        loginButton.addEventListener("click", signIn);
+    });
+</script>
