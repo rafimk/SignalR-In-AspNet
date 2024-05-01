@@ -87,4 +87,37 @@ internal sealed class JsonWebTokenManager : IJsonWebTokenManager
             Claims = claims ?? EmptyClaims
         };
     }
+    
+    public string? ParseUniqueNameFromToken(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        // Set up token validation parameters
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidIssuer = _issuer,
+            ValidAudience = _audience,
+            IssuerSigningKey = _signingCredentials.Key // Use the provided security key
+        };
+
+        try
+        {
+            // Read and validate the JWT token
+            var claimsPrincipal = tokenHandler.ValidateToken(token, tokenValidationParameters, out _);
+
+            // Retrieve the UniqueName claim from the claims principal
+            var uniqueNameClaim = claimsPrincipal.Claims.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.UniqueName);
+
+            // Return the value of the UniqueName claim as a string
+            return uniqueNameClaim?.Value;
+        }
+        catch (Exception ex)
+        {
+            // Token validation failed
+            Console.WriteLine("Token validation failed: " + ex.Message);
+            return null;
+        }
+    }
 }

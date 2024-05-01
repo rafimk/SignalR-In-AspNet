@@ -27,4 +27,32 @@ public class JwtTokenService(IOptions<JwtOptions> jwtOptions) : IJwtTokenService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+    
+    public string GetUniqueNameFromToken(string? token)
+    {
+        try
+        {
+            return GetName(token);
+        }
+        catch (Exception e)
+        {
+            return "";
+        }
+    }
+    
+    private string GetName(string? token)
+    {
+        string secret = _jwtOptions.SecretKey;
+        var key = Encoding.ASCII.GetBytes(secret);
+        var handler = new JwtSecurityTokenHandler();
+        var validations = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+        var claims = handler.ValidateToken(token, validations, out var tokenSecure);
+        return claims.Identity.Name;
+    }
 }

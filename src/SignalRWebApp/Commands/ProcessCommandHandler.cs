@@ -1,8 +1,10 @@
-﻿using MediatR;
+﻿using System.IdentityModel.Tokens.Jwt;
+using MediatR;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using SignalRWebApp.Hubs;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using SignalRWebApp.JwtAuthentications;
 
 namespace SignalRWebApp.Commands;
 
@@ -11,22 +13,27 @@ public class ProcessCommandHandler : IRequestHandler<ProcessCommand, Unit>
     private readonly ILogger<ProcessCommandHandler> _logger;
     private readonly IHubContext<NotificationsHub, INotificationClient> _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private IJsonWebTokenManager _jsonWebTokenManager;
 
     public ProcessCommandHandler(ILogger<ProcessCommandHandler> logger, 
         IHubContext<NotificationsHub, INotificationClient> context,
-        IHttpContextAccessor httpContextAccessor)
+        IHttpContextAccessor httpContextAccessor,
+        IJsonWebTokenManager jsonWebTokenManager)
     {
         _logger = logger;
         _context = context;
         _httpContextAccessor = httpContextAccessor;
+        _jsonWebTokenManager = jsonWebTokenManager;
     }
 
     public async Task<Unit> Handle(ProcessCommand request, CancellationToken cancellationToken)
     {
-        var uniqueName = _httpContextAccessor.HttpContext.User?.Claims.FirstOrDefault(c => c.Type == "unique_name")?.Value;
+        // var uniqueName = _httpContextAccessor.HttpContext.User?.Claims.FirstOrDefault(c => c.Type == "unique_name")?.Value;
 
         string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
 
+        var uniqueName = _jsonWebTokenManager.ParseUniqueNameFromToken(token!);
+        
         if (string.IsNullOrEmpty(token))
         {
             return Unit.Value;
@@ -48,16 +55,4 @@ public class ProcessCommandHandler : IRequestHandler<ProcessCommand, Unit>
         return Unit.Value;
     }
 
-    private string GetUniqueNameFromToken(string token)
-    {
-        var handler = new JwtSecurityTokenHandler();
-
-        // Read and parse the JWT token
-        var jsonToken = handler.ReadJwtToken(token);
-
-        // Retrieve the unique_name claim value
-        var uniqueName = jsonToken.Claims.FirstOrDefault(c => c.Type == "unique_name")?.Value;
-
-        return uniqueName;
-    }
 }
