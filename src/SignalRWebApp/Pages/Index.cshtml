@@ -2,11 +2,23 @@
 <div class="container">
     <!-- Login Form -->
     <div class="row p-1">
-        <div class="col-1">Mobile Number:</div>
-        <div class="col-5"><input type="text" id="mobileNumber" /></div>
+        <div class="col-2">User Id :</div>
+        <div class="col-8"><input type="text" id="userId" /></div>
     </div>
     <div class="row p-1">
-        <div class="col-6 text-end">
+        <div class="col-2">User Name :</div>
+        <div class="col-8"><input type="text" id="userName" /></div>
+    </div>
+    <div class="row p-1">
+        <div class="col-2">Password :</div>
+        <div class="col-8"><input type="text" id="password" /></div>
+    </div>
+    <div class="row p-1">
+        <div class="col-2">Mobile Number:</div>
+        <div class="col-8"><input type="text" id="mobileNumber" /></div>
+    </div>
+    <div class="row p-1">
+        <div class="col-10 text-end">
             <input type="button" id="loginButton" value="Login" />
         </div>
     </div>
@@ -20,6 +32,9 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Function to handle sign-in process
         async function signIn() {
+            const userId = document.getElementById("userId").value;
+            const userName = document.getElementById("userName").value;
+            const password = document.getElementById("password").value;
             const mobileNumber = document.getElementById("mobileNumber").value;
             const baseUrl = window.location.origin; 
 
@@ -31,7 +46,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ mobileNumber: mobileNumber })
+                    body: JSON.stringify({ userId, userName, password, mobileNumber })
                 });
 
                 if (response.ok) {

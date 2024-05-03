@@ -1,4 +1,6 @@
-@url = https://localhost:44345/
+@url = http://localhost:5275
+
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkMzUzNDNjZS04MzViLTQ0NTctODE4Zi03N2E3NGEyY2UwZGQiLCJ1bmlxdWVfbmFtZSI6ImQzNTM0M2NlLTgzNWItNDQ1Ny04MThmLTc3YTc0YTJjZTBkZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJkMzUzNDNjZS04MzViLTQ0NTctODE4Zi03N2E3NGEyY2UwZGQiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJtZW1iZXIiLCJJc0FkZE1lbWJlciI6ImZhbHNlIiwiSXNBZGRVc2VyIjoiZmFsc2UiLCJuYmYiOjE3MTQ3NzU1ODIsImV4cCI6MTcxNDc4NjM4MiwiaXNzIjoieW91cl9pc3N1ZXIiLCJhdWQiOiJ5b3VyX2F1ZGllbmNlIn0.E2i-xTYJrR1cQptroN5CGqHEIkNkmlfACbnwFkwgcFQ
 
 ###
 # @name sign_in
@@ -6,7 +8,10 @@ POST {{url}}/signIn
 Content-Type: application/json
 
 {
-    "MobileNumber": "971554296326"
+    "userId": "d35343ce-835b-4457-818f-77a74a2ce0dd",
+    "userName": "Rafi",
+    "password": "Rafi",
+    "mobileNumber": "971554296326"
 }
 
 ### 
@@ -14,7 +19,7 @@ Content-Type: application/json
 
 ###
 POST {{url}}/notification
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {

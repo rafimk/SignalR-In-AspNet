@@ -28,11 +28,18 @@ public class JwtTokenService(IOptions<JwtOptions> jwtOptions) : IJwtTokenService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
     
-    public string GetUniqueNameFromToken(string? token)
+    public string? GetUniqueNameFromToken(string? jwt)
     {
         try
         {
-            return GetName(token);
+            var token = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(jwt);
+            //var handler = new JwtSecurityTokenHandler();
+            //var jwtSecurityToken = handler.ReadJwtToken(token);
+            var claims = token.Claims.ToList();
+
+            var remoteClaims = claims.FirstOrDefault(x => x.Type == "UniqueName")?.Value;
+
+            return remoteClaims;
         }
         catch (Exception e)
         {

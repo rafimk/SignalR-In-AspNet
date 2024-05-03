@@ -1,19 +1,18 @@
 ﻿using MediatR;
-using SignalRWebApp.JwtAuthentications;
+using SignalRWebApp.Auth;
 
 namespace SignalRWebApp.Commands;
 
-public class SignInCommandHandler(IJsonWebTokenManager jsonWebTokenManager)
-    : IRequestHandler<SignInCommand, JsonWebToken>
+public class SignInCommandHandler(IAuthenticator _authenticator, ITokenStorage _tokenStorage)
+    : IRequestHandler<SignInCommand, JwtDto>
 {
-    public async Task<JsonWebToken> Handle(SignInCommand request, CancellationToken cancellationToken)
+    public async Task<JwtDto> Handle(SignInCommand request, CancellationToken cancellationToken)
     {
-        var claims = new Dictionary<string, IEnumerable<string>>
-        {
-            ["permissions"] = new List<string> { "user" }
-        };
-        var jwt = jsonWebTokenManager.CreateToken(request.MobileNumber, "email", request.MobileNumber, claims: claims);
-        // var jwtToken = jwtTokenService.GenerateJwtToken(request.MobileNumber);
+        var isAddMember = false;
+        var isAddUser = false;
+
+        var jwt = _authenticator.CreateToken(request.UserId, "member", isAddMember, isAddUser);
+        _tokenStorage.Set(jwt);
         await Task.CompletedTask;
         return jwt;
     }

@@ -9,12 +9,25 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         const notificationUrl = `${baseUrl}/notifications`;
 
-        // Configure and start the SignalR connection
         const hubConnection = new signalR.HubConnectionBuilder()
             .withUrl(notificationUrl, {
                 accessTokenFactory: () => jwtToken
             })
             .build();
+
+        //const hubConnection = new HubConnectionBuilder()
+        //    .WithUrl(notificationUrl, options => {
+        //        options.AccessTokenProvider = () => Task.FromResult(jwtToken);
+        //    })
+        //    .WithAutomaticReconnect()
+        //    .Build();
+
+
+        //const hubConnection = new signalR.HubConnectionBuilder()
+        //    .withUrl(notificationUrl, {
+        //        accessTokenFactory: () => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImY0NWZlNDc1LTg0NjYtNDg0Zi1hZjY5LWEyNjU4YThlZTkxNSIsInN1YiI6ImY0NWZlNDc1LTg0NjYtNDg0Zi1hZjY5LWEyNjU4YThlZTkxNSIsImp0aSI6IjRhZDhhZDIiLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo1MDAwIiwiaHR0cHM6Ly9sb2NhbGhvc3Q6NDQzNzgiXSwibmJmIjoxNzEzODkyODczLCJleHAiOjE3MjE3NTUyNzMsImlhdCI6MTcxMzg5Mjg3NCwiaXNzIjoiZG90bmV0LXVzZXItand0cyJ9.wvn-A1CirE9VR6qmLiWZoXJRgavDgve9xi4RZjajnRE"
+        //    })
+        //    .build();
 
         try {
             // Start the SignalR connection

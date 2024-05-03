@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using SignalRWebApp.Services;
 
 namespace SignalRWebApp.JwtAuthentications;
 
@@ -193,6 +194,8 @@ public static class Extensions
                 p.AddAuthenticationSchemes(CertificateAuthenticationDefaults.AuthenticationScheme).RequireAuthenticatedUser();
             });
         });
+
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
 
         return services;
     }

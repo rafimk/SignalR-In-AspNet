@@ -45,7 +45,7 @@ public static class ConfigureServices
     public static T BindOptions<T>(this IConfigurationSection? section) where T : new()
     {
         var options = new T();
-        section.Bind(options);
+        section?.Bind(options);
         return options;
     }
 }

@@ -3,15 +3,26 @@ using System.Collections.Concurrent;
 
 namespace SignalRWebApp.Hubs;
 
-
-public class NotificationsHub : Hub<INotificationClient>
+public class ConnectionHub : Hub
 {
     private static readonly ConcurrentDictionary<string, string> _userConnectionMap = new ConcurrentDictionary<string, string>();
+
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public NotificationsHub(IHttpContextAccessor httpContextAccessor)
+    public ConnectionHub(IHttpContextAccessor httpContextAccessor)
     {
         _httpContextAccessor = httpContextAccessor;
+    }
+
+    public async Task Send(string userId)
+    {
+        var message = $"Send message to you with user id {userId}";
+        await Clients.Client(userId).SendAsync("ReceiveNotification", message);
+    }
+
+    public string GetConnectionId()
+    {
+        return Context.ConnectionId;
     }
 
     public override async Task OnConnectedAsync()
@@ -21,7 +32,7 @@ public class NotificationsHub : Hub<INotificationClient>
         if (userId is not null)
         {
             _userConnectionMap.AddOrUpdate(userId.ToString()!, Context.ConnectionId, (key, value) => Context.ConnectionId);
-            await Clients.Client(Context.ConnectionId).ReceiveNotification($"Thank you for connecting {userId}");
+            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveNotification", $"Thank you for connecting {userId}");
         }
 
         await base.OnConnectedAsync();
@@ -38,21 +49,5 @@ public class NotificationsHub : Hub<INotificationClient>
         }
 
         await base.OnDisconnectedAsync(exception);
-    }
-
-    // Method to send a notification to a specific user
-    public async Task SendNotificationToUser(string userId, string message)
-    {
-        if (userId is null)
-        {
-            return;
-        }
-
-        if (_userConnectionMap.TryGetValue(userId.ToString()!, out var connectionId))
-        {
-            await Clients.Client(connectionId).ReceiveNotification(message);
-        }
-
-        return;
     }
 }

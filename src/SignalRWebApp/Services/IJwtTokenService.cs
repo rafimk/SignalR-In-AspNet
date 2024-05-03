@@ -3,5 +3,5 @@
 public interface IJwtTokenService
 {
     string GenerateJwtToken(string mobileNumber);
-    string GetUniqueNameFromToken(string? token);
+    string? GetUniqueNameFromToken(string? token);
 }

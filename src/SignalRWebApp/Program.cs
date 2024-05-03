@@ -1,8 +1,11 @@
 using System.Reflection;
 using MediatR;
+using Microsoft.AspNetCore.SignalR;
+using SignalRWebApp.Auth;
 using SignalRWebApp.Commands;
 using SignalRWebApp.Hubs;
-using SignalRWebApp.JwtAuthentications;
+using SignalRWebApp.Middlewares;
+using SignalRWebApp.Providers;
 using SignalRWebApp.Time;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +23,8 @@ builder.Services.AddMediatR(cfg => {
     // cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
     // cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
 });
+
+builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
 builder.Services.AddCors();
 
@@ -52,13 +57,14 @@ app.MapPost("/signIn", async (SignInCommand command, ISender dispatcher) =>
 app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.UseAuthorization();
+app.UseAuthentication();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseMiddleware<ExtractUserInfoMiddleware>();
 app.MapRazorPages();
-app.MapHub<NotificationsHub>("notifications");
+app.MapHub<ConnectionHub>("notifications");
 
 app.Run();
